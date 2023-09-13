@@ -155,6 +155,15 @@ function setup_gophish () {
         cd ..
         print_good "Live feed configured! cd into evilfeed then launch binary with ./evilfeed to start!"
     fi
+    
+    #Pulls path that setup script is ran from
+    CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" 
+    #Uses Letsencrypt SSL certs to secure GoPhish.  Prevents annoying SSL errors and is more secure if opening server to internet
+    sed -i "s|gophish_admin.crt|${certs_path}fullchain.pem|g" "${CURR_DIR}/gophish/config.json"
+    sed -i "s|gophish_admin.key|${certs_path}privkey.pem|g" "${CURR_DIR}/gophish/config.json"
+    sed -i "s|gophish_template.crt|${certs_path}fullchain.pem|g" "${CURR_DIR}/gophish/config.json"
+    sed -i "s|gophish_template.key|${certs_path}privkey.pem|g" "${CURR_DIR}/gophish/config.json"
+    
     # Replace rid with user input
     find . -type f -exec sed -i "s|client_id|${rid_replacement}|g" {} \;
     cd gophish || exit 1
